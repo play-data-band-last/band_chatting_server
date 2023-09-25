@@ -19,11 +19,8 @@ exports.create = (req, res) => {
   });
 
   // Save Tutorial in the database
-  chatting
-    .save(chatting)
-    .then(data => {
-      res.send(data);
-    })
+  chatting.save(chatting)
+    .then(data => {res.send(data);})
     .catch(err => {
       res.status(500).send({
         message:
@@ -71,5 +68,29 @@ exports.delete = (req, res) => {
       res.status(500).send({
         message: "Could not delete Tutorial with id=" + id
       });
+    });
+};
+
+exports.updateMemberInfo = (req, res) => {
+  const { memberId, memberName, memberImage } = req.body;
+
+  console.log(memberId)
+  console.log(memberName)
+  console.log(memberImage)
+
+  Chatting.updateMany({ memberId: memberId }, { memberName: memberName, memberImage: memberImage })
+    .then(data => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot delete Tutorial with id=${memberId}. Maybe Tutorial was not found!`
+        });
+      } else {
+        res.send({
+          message: "Tutorial was update successfully!"
+        });
+      }
+    })
+    .catch(err => {
+      console.log(err)
     });
 };

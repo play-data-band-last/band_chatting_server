@@ -12,5 +12,7 @@ module.exports = app => {
   // Delete a Tutorial with id
   router.delete("/:id", chattings.delete);
 
+  router.put("/update", chattings.updateMemberInfo)
+
   app.use("/api/v1/chattings", router);
 };
