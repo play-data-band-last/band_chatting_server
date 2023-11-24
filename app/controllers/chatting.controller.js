@@ -74,21 +74,9 @@ exports.delete = (req, res) => {
 exports.updateMemberInfo = (req, res) => {
   const { memberId, memberName, memberImage } = req.body;
 
-  console.log(memberId)
-  console.log(memberName)
-  console.log(memberImage)
-
   Chatting.updateMany({ memberId: memberId }, { memberName: memberName, memberImage: memberImage })
     .then(data => {
-      if (!data) {
-        res.status(404).send({
-          message: `Cannot delete Tutorial with id=${memberId}. Maybe Tutorial was not found!`
-        });
-      } else {
-        res.send({
-          message: "Tutorial was update successfully!"
-        });
-      }
+      console.log(data)
     })
     .catch(err => {
       console.log(err)

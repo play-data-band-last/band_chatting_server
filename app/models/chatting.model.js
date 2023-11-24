@@ -7,7 +7,10 @@ module.exports = mongoose => {
         type: String,
         index: true
       },
-      memberId: Number,
+      memberId: {
+        type: Number,
+        index: true
+      },
       memberName: String,
       memberImage: String,
       content: String,

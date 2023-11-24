@@ -1,7 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 
+
 const app = express();
+
+const { Kafka } = require('kafkajs');
+const Chatting = require("./app/controllers/chatting.controller.js");
+
 
 var corsOptions = {
   origin: "*"
@@ -31,6 +36,41 @@ db.mongoose
     console.log("Cannot connect to the database!", err);
     process.exit();
   });
+
+
+const kafka = new Kafka({
+  clientId: 'my-app',
+  brokers: ['34.121.154.179:9093']
+})
+
+const consumer = kafka.consumer({ groupId: 'user' })
+const initKafka = async () => {
+  console.log('start subscribe')
+  await consumer.connect()
+  await consumer.subscribe({ topic: 'chattingUpdate', fromBeginning: false })
+  await consumer.run({
+    eachMessage: async ({ topic, partition, message }) => {
+      try {
+        const value = JSON.parse(message.value);
+
+        console.log(value)
+
+        await Chatting.updateMemberInfo({
+          body: {
+            memberId: value.memberId,
+            memberName: value.memberName,
+            memberImage: value.memberImage
+          }
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  });
+}
+
+initKafka();
+
 
 // simple route
 app.get("/", (req, res) => {
